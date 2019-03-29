@@ -36,7 +36,7 @@ public class TTTControllerImpl implements TTTControllerInterface{
 	public boolean setSelection(int row, int col, int currentPlayer) {
 		if(row >= array.length || col >= array.length) return false; 
 		if(currentPlayer != 1 && currentPlayer != 2) return false;
-		
+		if(winner != 0) return true;
 		
 		if(array[row][col] != null ) {
 			return false;

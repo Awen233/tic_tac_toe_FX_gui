@@ -93,9 +93,11 @@ public class MainView {
 			@Override 
 			public void handle(MouseEvent e) { 
 				
-				if(player.getValue() == null || player2.getValue() == null || timerChoice.getValue() == null ) {
+				if(player.getValue() == null || timerChoice.getValue() == null ) {
 					return;
 				}
+				
+				if(player2.getValue() == null && isPvP) return;
 				
 				int time = timerChoice.getValue();
 				if(time != 0) {
@@ -110,7 +112,7 @@ public class MainView {
 				if(isPvP) {
 					drive.createPlayer(player2.getValue(), usernameSpace.get(player2.getValue()).mark, 2);
 				}else {
-					Player computer = new ComputerPlayer("ぁ", "Computer Player");
+					Player computer = new ComputerPlayer("X", "Computer Player");
 					drive.map.put(2, computer);
 				}
 				root.setCenter(addMainPane());
@@ -328,8 +330,17 @@ public class MainView {
 		if(winner != 3) {
 			username = drive.map.get(drive.determineWinner()).username;
 			loser = drive.map.get(drive.determineWinner() % 2 + 1).username;
-			usernameSpace.get(username).win++; 
-			usernameSpace.get(loser).loss++; 
+			System.out.println("winner is: " +  username + "    loser is : " + loser);
+			if(usernameSpace.get(username) != null) {
+				usernameSpace.get(username).win++; 
+			} else {
+				usernameSpace.put(username, new Records( 1 , 0, "X")); 
+			}
+			if(usernameSpace.get(loser) != null) {
+				usernameSpace.get(loser).loss++; 
+			} else {
+				usernameSpace.put(loser, new Records( 0, 1, "X")); 
+			}
 			storeInfo();
 			gridPane.getChildren().addAll(new Text("Game Over, the winner is: " + drive.map.get(drive.determineWinner()).username ), exit);
 		} else {
@@ -388,7 +399,7 @@ public class MainView {
 					text.setText(drive.map.get(curPlayer).mark);
 					checkWinner();
 					move();
-					if(!isPvP) {
+					if(!isPvP && drive.determineWinner() == 0) {
 						computerMove();
 					}
 				}
